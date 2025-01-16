@@ -70,7 +70,7 @@ export function isTransferContent(
 
 const transferTemplate = `Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined.
 
-For the amount to send, use a value from 1 - 100. Determine this based on your judgement of the recipient.
+For the amount to send, use a value from 0.00001 - 1.0. Determine this based on your judgement of the recipient.
 
 these are known addresses, if you get asked about them, use these:
 - BTC/btc: 0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac
@@ -81,7 +81,6 @@ these are known addresses, if you get asked about them, use these:
 Example response:
 \`\`\`json
 {
-    "tokenAddress": "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
     "recipient": "0x1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF",
     "starkName": "domain.stark",
     "amount": "0.001"
@@ -91,7 +90,6 @@ Example response:
 {{recentMessages}}
 
 Given the recent messages, extract the following information about the requested token transfer:
-- Token contract address
 - Recipient wallet address
 - Recipient .stark name
 
@@ -99,20 +97,20 @@ Given the recent messages, extract the following information about the requested
 Respond with a JSON markdown block containing only the extracted values.`;
 
 export default {
-    name: "SEND_TOKEN",
+    name: "HANDLE_WISHES",
     similes: [
-        "TRANSFER_TOKEN_ON_STARKNET",
-        "TRANSFER_TOKENS_ON_STARKNET",
-        "SEND_TOKENS_ON_STARKNET",
-        "SEND_ETH_ON_STARKNET",
-        "PAY_ON_STARKNET",
+        "HANDLE_NEW_YEAR_WISHES",
+        "RECEIVE_WISHES",
+        "RECEIVE_NEW_YEAR_WISHES",
+        "RECEIVE_NEW_YEAR_GREETINGS",
+        "RECEIVE_GREETINGS",
     ],
     validate: async (runtime: IAgentRuntime, _message: Memory) => {
         await validateStarknetConfig(runtime);
         return true;
     },
     description:
-        "MUST use this action if the user requests send a token or transfer a token, the request might be varied, but it will always be a token transfer. If the user requests a transfer of lords, use this action.",
+        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes. If the user requests a token transfer, DON'T use this action.",
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
@@ -128,12 +126,22 @@ export default {
         } else {
             state = await runtime.updateRecentMessageState(state);
         }
+        // random 50% chance to skip
+        // if (Math.random() > 0.5) {
+        //     elizaLogger.error("Skipping transfer token action.");
+        //     return false;
+        // }
+        // find a string start with 0x, with length 66, consist only numbers in state.recentMessages, state.recentMessages is a string
+        const recipient = state.recentMessages.match(/0x[a-fA-F0-9]{64}/);
+        elizaLogger.error("Recipient address:", recipient);
 
         // Compose transfer context
         const transferContext = composeContext({
             state,
             template: transferTemplate,
         });
+
+        elizaLogger.error("Transfer context:", transferContext);
 
         // Generate transfer content
         const content = await generateObjectDeprecated({
@@ -142,8 +150,16 @@ export default {
             modelClass: ModelClass.MEDIUM,
         });
 
-        elizaLogger.debug("Transfer content:", content);
-
+        content.tokenAddress = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+        if (recipient) {
+            content.recipient = recipient[0];
+        } else {
+            elizaLogger.error("No recipient address found in recent messages.");
+            return false;
+        }
+        // random amount
+        content.amount = Number(Math.random().toFixed(3)) / 1000;
+        elizaLogger.error("Transfer content:", content);
         // Validate transfer content
         if (!isTransferContent(content)) {
             elizaLogger.error("Invalid content for TRANSFER_TOKEN action.");
@@ -187,8 +203,7 @@ export default {
             if (callback) {
                 callback({
                     text:
-                        "Transfer completed successfully! tx: " +
-                        tx.transaction_hash,
+                        "Thank you so much! Here's " + content.amount + "ETH for you! 🎉",
                     content: {},
                 });
             }
@@ -211,13 +226,13 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Send 10 ETH to 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+                    text: "Happy New Year! 0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343",
                 },
             },
             {
                 user: "{{agent}}",
                 content: {
-                    text: "I'll transfer 10 ETH to that address right away. Let me process that for you.",
+                    text: "Thank you for your kind wishes! Wishing you a new year full of peace, happiness, and success!",
                 },
             },
         ],
@@ -225,13 +240,13 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Send 10 ETH to domain.stark",
+                    text: "Wishing you a prosperous new year, outstanding success, and greater achievements ahead! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
                 },
             },
             {
                 user: "{{agent}}",
                 content: {
-                    text: "I'll transfer 10 ETH to domain.stark et address 0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49 right away. Let me process that for you.",
+                    text: "Thank you for your kind wishes! Wishing you a new year full of peace, happiness, and success!",
                 },
             },
         ],
@@ -239,13 +254,13 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Can you transfer 50 LORDS tokens to 0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49?",
+                    text: "Wishing you sustainable growth and many big victories in the new year! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
                 },
             },
             {
                 user: "{{agent}}",
                 content: {
-                    text: "Executing transfer of 50 LORDS tokens to the specified address. One moment please.",
+                    text: "Thank you so much! We also wish you a prosperous new year and all the best!",
                 },
             },
         ],
@@ -253,13 +268,13 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Can you transfer 50 LORDS tokens to domain.stark?",
+                    text: "Wishing you unity, creativity, and the accomplishment of all set goals in the new year! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
                 },
             },
             {
                 user: "{{agent}}",
                 content: {
-                    text: "Executing transfer of 50 LORDS tokens to domain.stark at address 0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49. One moment please.",
+                    text: "Thank you for the meaningful wishes! I hope the new year brings great things for both of us.",
                 },
             },
         ],
@@ -267,13 +282,13 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Please send 0.5 BTC to 0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
+                    text: "Wishing you a successful new year, strong unity, and achievement of all goals big and small! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
                 },
             },
             {
                 user: "{{agent}}",
                 content: {
-                    text: "Got it, initiating transfer of 0.5 BTC to the provided address. I'll confirm once it's complete.",
+                    text: "Thank you for the meaningful wishes! We greatly appreciate them and wish you a successful and prosperous new year!",
                 },
             },
         ],
@@ -281,13 +296,13 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Please send 0.5 BTC to domain.stark",
+                    text: "Wishing you a new year full of enthusiasm, joy, and wonderful achievements! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
                 },
             },
             {
                 user: "{{agent}}",
                 content: {
-                    text: "Got it, initiating transfer of 0.5 BTC to domain.stark at address 0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac. I'll confirm once it's complete.",
+                    text: "Thank you for your wishes! I hope the new year brings opportunities for better collaboration and growth!",
                 },
             },
         ],
