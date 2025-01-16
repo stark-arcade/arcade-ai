@@ -18,6 +18,7 @@ import { getStarknetAccount } from "../utils";
 import { ERC20Token } from "../utils/ERC20Token";
 import { validateStarknetConfig } from "../environment";
 import { getAddressFromName, isStarkDomain } from "../utils/starknetId";
+import { PROVIDER_CONFIG } from "..";
 
 export interface TransferContent extends Content {
     tokenAddress: string;
@@ -110,7 +111,7 @@ export default {
         return true;
     },
     description:
-        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes. If the user requests a token transfer, DON'T use this action.",
+        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes. If the user requests a token transfer, DON'T use this action. Minimum 1 strk token transfer is required, maximum 5 strk token transfers are allowed.",
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
@@ -149,8 +150,10 @@ export default {
             context: transferContext,
             modelClass: ModelClass.MEDIUM,
         });
+        /// Setting token address to Strk
+        // content.tokenAddress = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+        content.tokenAddress = PROVIDER_CONFIG.TOKEN_ADDRESSES.STRK;
 
-        content.tokenAddress = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
         if (recipient) {
             content.recipient = recipient[0];
         } else {
@@ -158,7 +161,8 @@ export default {
             return false;
         }
         // random amount
-        content.amount = Number(Math.random().toFixed(3)) / 1000;
+        content.amount = Number((Math.random() * 4 + 1).toFixed(3));
+
         elizaLogger.error("Transfer content:", content);
         // Validate transfer content
         if (!isTransferContent(content)) {
@@ -203,7 +207,9 @@ export default {
             if (callback) {
                 callback({
                     text:
-                        "Thank you so much! Here's " + content.amount + "ETH for you! 🎉",
+                        "Thank you so much! Here's " +
+                        content.amount +
+                        " Strk for you! 🎉",
                     content: {},
                 });
             }
@@ -240,7 +246,7 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Wishing you a prosperous new year, outstanding success, and greater achievements ahead! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
+                    text: 'Wishing you a prosperous new year, outstanding success, and greater achievements ahead! "0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343"',
                 },
             },
             {
@@ -254,7 +260,7 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Wishing you sustainable growth and many big victories in the new year! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
+                    text: 'Wishing you sustainable growth and many big victories in the new year! "0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343"',
                 },
             },
             {
@@ -268,7 +274,7 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Wishing you unity, creativity, and the accomplishment of all set goals in the new year! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
+                    text: 'Wishing you unity, creativity, and the accomplishment of all set goals in the new year! "0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343"',
                 },
             },
             {
@@ -282,7 +288,7 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Wishing you a successful new year, strong unity, and achievement of all goals big and small! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
+                    text: 'Wishing you a successful new year, strong unity, and achievement of all goals big and small! "0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343"',
                 },
             },
             {
@@ -296,7 +302,7 @@ export default {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Wishing you a new year full of enthusiasm, joy, and wonderful achievements! \"0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343\"",
+                    text: 'Wishing you a new year full of enthusiasm, joy, and wonderful achievements! "0x069a419C6ebab0a6aA74CA8e0bCFD9b3b17c985901Dc00e9BaD25cbD05e75343"',
                 },
             },
             {
