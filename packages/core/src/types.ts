@@ -1011,6 +1011,10 @@ export interface IDatabaseAdapter {
 
     getParticipantsForRoom(roomId: UUID): Promise<UUID[]>;
 
+    addRecipient(recipientId: UUID): Promise<boolean>;
+
+    getRecipient(recipientId: UUID): Promise<boolean>;
+
     getParticipantUserState(
         roomId: UUID,
         userId: UUID

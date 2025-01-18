@@ -35,6 +35,12 @@ export class PGLiteDatabaseAdapter
     extends DatabaseAdapter<PGlite>
     implements IDatabaseCacheAdapter
 {
+    addRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     constructor(options: PGliteOptions) {
         super();
         this.db = new PGlite({

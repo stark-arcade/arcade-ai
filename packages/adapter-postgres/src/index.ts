@@ -37,6 +37,12 @@ export class PostgresDatabaseAdapter
     extends DatabaseAdapter<Pool>
     implements IDatabaseCacheAdapter
 {
+    addRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     private pool: Pool;
     private readonly maxRetries: number = 3;
     private readonly baseDelay: number = 1000; // 1 second

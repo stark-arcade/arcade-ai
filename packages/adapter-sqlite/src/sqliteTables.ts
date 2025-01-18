@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS "accounts" (
     "details" TEXT DEFAULT '{}' CHECK(json_valid("details")) -- Ensuring details is a valid JSON field
 );
 
+-- Table: recipients
+CREATE TABLE IF NOT EXISTS "recipients" (
+    "id" TEXT PRIMARY KEY
+);
+
 -- Table: memories
 CREATE TABLE IF NOT EXISTS "memories" (
     "id" TEXT PRIMARY KEY,

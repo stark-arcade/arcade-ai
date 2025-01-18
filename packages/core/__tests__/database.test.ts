@@ -9,9 +9,37 @@ import {
     Participant,
     Relationship,
     UUID,
+    RAGKnowledgeItem,
 } from "../src/types.ts";
 
 class MockDatabaseAdapter extends DatabaseAdapter {
+    init(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    close(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    addRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getKnowledge(params: { id?: UUID; agentId: UUID; limit?: number; query?: string; conversationContext?: string; }): Promise<RAGKnowledgeItem[]> {
+        throw new Error("Method not implemented.");
+    }
+    searchKnowledge(params: { agentId: UUID; embedding: Float32Array; match_threshold: number; match_count: number; searchText?: string; }): Promise<RAGKnowledgeItem[]> {
+        throw new Error("Method not implemented.");
+    }
+    createKnowledge(knowledge: RAGKnowledgeItem): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    removeKnowledge(id: UUID): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    clearKnowledge(agentId: UUID, shared?: boolean): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
     getMemoryById(_id: UUID): Promise<Memory | null> {
         throw new Error("Method not implemented.");
     }

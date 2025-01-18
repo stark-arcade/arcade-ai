@@ -23,6 +23,12 @@ export class SqlJsDatabaseAdapter
     extends DatabaseAdapter<Database>
     implements IDatabaseCacheAdapter
 {
+    addRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     constructor(db: Database) {
         super();
         this.db = db;

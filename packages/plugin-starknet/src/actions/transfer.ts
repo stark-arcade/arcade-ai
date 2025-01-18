@@ -111,7 +111,7 @@ export default {
         return true;
     },
     description:
-        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes. If the user requests a token transfer, DON'T use this action. Minimum 1 strk token transfer is required, maximum 5 strk token transfers are allowed.",
+        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes. If the user requests a token transfer, DON'T use this action.",
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
@@ -120,7 +120,6 @@ export default {
         callback?: HandlerCallback
     ): Promise<boolean> => {
         elizaLogger.log("Starting SEND_TOKEN handler...");
-
         // Initialize or update state
         if (!state) {
             state = (await runtime.composeState(message)) as State;
@@ -134,6 +133,7 @@ export default {
         // }
         // find a string start with 0x, with length 66, consist only numbers in state.recentMessages, state.recentMessages is a string
         const recipient = state.recentMessages.match(/0x[a-fA-F0-9]{64}/);
+
         elizaLogger.error("Recipient address:", recipient);
 
         // Compose transfer context
@@ -141,8 +141,6 @@ export default {
             state,
             template: transferTemplate,
         });
-
-        elizaLogger.error("Transfer context:", transferContext);
 
         // Generate transfer content
         const content = await generateObjectDeprecated({
@@ -158,6 +156,18 @@ export default {
             content.recipient = recipient[0];
         } else {
             elizaLogger.error("No recipient address found in recent messages.");
+            return false;
+        }
+
+        const recipientExists = await runtime.databaseAdapter.getRecipient(state.userId) || await runtime.databaseAdapter.getRecipient(content.recipient);
+        elizaLogger.error("Recipient exists:", recipientExists);
+        if (recipientExists) {
+            elizaLogger.error("Recipient already exists.");
+            return false;
+        }
+
+        if (!await runtime.databaseAdapter.addRecipient(state.userId) || !await runtime.databaseAdapter.addRecipient(content.recipient)) {
+            elizaLogger.error("Error adding recipient to database.");
             return false;
         }
         // random amount
@@ -207,9 +217,9 @@ export default {
             if (callback) {
                 callback({
                     text:
-                        "Thank you so much! Here's " +
+                        "Here’s a little something for your kind wishes: " +
                         content.amount +
-                        " Strk for you! 🎉",
+                        " STRK token! 🎉",
                     content: {},
                 });
             }

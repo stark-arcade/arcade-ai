@@ -123,6 +123,25 @@ export class SqliteDatabaseAdapter
         }
     }
 
+    async addRecipient(recipientId: UUID): Promise<boolean> {
+        try {
+            const sql = "INSERT INTO recipients (id) VALUES (?)";
+            this.db.prepare(sql).run(recipientId);
+            return true;
+        } catch (error) {
+            console.log("Error adding recipient", error);
+            return false;
+        }
+    }
+
+    async getRecipient(recipientId: UUID): Promise<boolean> {
+        const sql = "SELECT id FROM recipients WHERE id = ?";
+        const recipient = this.db.prepare(sql).get(recipientId) as
+            | { id: string }
+            | undefined;
+        return recipient ? true : false;
+    }
+
     async getActorDetails(params: { roomId: UUID }): Promise<Actor[]> {
         const sql = `
       SELECT a.id, a.name, a.username, a.details

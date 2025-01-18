@@ -15,6 +15,12 @@ import {
 import { DatabaseAdapter } from "@elizaos/core";
 import { v4 as uuid } from "uuid";
 export class SupabaseDatabaseAdapter extends DatabaseAdapter {
+    addRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getRecipient(recipientId: UUID): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     async getRoom(roomId: UUID): Promise<UUID | null> {
         const { data, error } = await this.supabase
             .from("rooms")
