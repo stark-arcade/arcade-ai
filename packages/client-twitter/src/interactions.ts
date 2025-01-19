@@ -485,6 +485,8 @@ export class TwitterInteractionClient {
                         state
                     )) as State;
 
+                    state.userId = `${this.client.profile.id}-${this.client.profile.id}-${this.client.profile.id}-${this.client.profile.id}-${this.client.profile.id}`;
+
                     for (const responseMessage of responseMessages) {
                         if (
                             responseMessage ===

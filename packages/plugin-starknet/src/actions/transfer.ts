@@ -111,7 +111,7 @@ export default {
         return true;
     },
     description:
-        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes. If the user requests a token transfer, DON'T use this action.",
+        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes.",
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
@@ -134,7 +134,7 @@ export default {
         // find a string start with 0x, with length 66, consist only numbers in state.recentMessages, state.recentMessages is a string
         const recipient = state.recentMessages.match(/0x[a-fA-F0-9]{64}/);
 
-        elizaLogger.error("Recipient address:", recipient);
+        elizaLogger.info("Recipient address:", recipient);
 
         // Compose transfer context
         const transferContext = composeContext({
@@ -160,13 +160,18 @@ export default {
         }
 
         const recipientExists = await runtime.databaseAdapter.getRecipient(state.userId) || await runtime.databaseAdapter.getRecipient(content.recipient);
-        elizaLogger.error("Recipient exists:", recipientExists);
         if (recipientExists) {
             elizaLogger.error("Recipient already exists.");
             return false;
         }
 
-        if (!await runtime.databaseAdapter.addRecipient(state.userId) || !await runtime.databaseAdapter.addRecipient(content.recipient)) {
+        elizaLogger.info("User ID: ", state.userId);
+        if (!await runtime.databaseAdapter.addRecipient(state.userId)) {
+            elizaLogger.error("Error adding recipient to database.");
+            return false;
+        }
+
+        if (!await runtime.databaseAdapter.addRecipient(content.recipient)) {
             elizaLogger.error("Error adding recipient to database.");
             return false;
         }
