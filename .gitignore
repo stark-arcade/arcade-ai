@@ -59,3 +59,4 @@ agent/content
 eliza.manifest
 eliza.manifest.sgx
 eliza.sig
+characters/default.character.json
