@@ -125,7 +125,7 @@ export class SqliteDatabaseAdapter
 
     async addRecipient(walletAddress: UUID, userId: string, token: number): Promise<boolean> {
         try {
-            const sql = "INSERT INTO recipients (userId, walletAddress, tokenrecieved) VALUES (?, ?, ?)";
+            const sql = "INSERT INTO recipients (userId, walletAddress, tokenRecieved) VALUES (?, ?, ?)";
             this.db.prepare(sql).run(userId, walletAddress, token);
             return true;
         } catch (error) {
