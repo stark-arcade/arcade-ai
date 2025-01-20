@@ -383,6 +383,8 @@ export class TwitterInteractionClient {
         const tweetExists =
             await this.runtime.messageManager.getMemoryById(tweetId);
 
+        state.userId = message.userId;
+
         if (!tweetExists) {
             elizaLogger.log("tweet does not exist, saving");
             const userIdUUID = stringToUuid(tweet.userId as string);
@@ -484,8 +486,6 @@ export class TwitterInteractionClient {
                     state = (await this.runtime.updateRecentMessageState(
                         state
                     )) as State;
-
-                    state.userId = `${this.client.profile.id}-${this.client.profile.id}-${this.client.profile.id}-${this.client.profile.id}-${this.client.profile.id}`;
 
                     for (const responseMessage of responseMessages) {
                         if (

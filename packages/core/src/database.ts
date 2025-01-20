@@ -78,9 +78,9 @@ export abstract class DatabaseAdapter<DB = any> implements IDatabaseAdapter {
      */
     abstract createAccount(account: Account): Promise<boolean>;
 
-    abstract addRecipient(recipientId: UUID): Promise<boolean>;
+    abstract addRecipient(walletAddress: UUID, userId: string, token: number): Promise<boolean>;
 
-    abstract getRecipient(recipientId: UUID): Promise<boolean>;
+    abstract getRecipient(walletAddress: UUID, userId: string): Promise<boolean>;
 
     /**
      * Retrieves memories based on the specified parameters.

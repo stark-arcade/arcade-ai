@@ -123,10 +123,10 @@ export class SqliteDatabaseAdapter
         }
     }
 
-    async addRecipient(recipientId: UUID): Promise<boolean> {
+    async addRecipient(walletAddress: UUID, userId: string, token: number): Promise<boolean> {
         try {
-            const sql = "INSERT INTO recipients (id) VALUES (?)";
-            this.db.prepare(sql).run(recipientId);
+            const sql = "INSERT INTO recipients (userId, walletAddress, tokenrecieved) VALUES (?, ?, ?)";
+            this.db.prepare(sql).run(userId, walletAddress, token);
             return true;
         } catch (error) {
             console.log("Error adding recipient", error);
@@ -134,12 +134,16 @@ export class SqliteDatabaseAdapter
         }
     }
 
-    async getRecipient(recipientId: UUID): Promise<boolean> {
-        const sql = "SELECT id FROM recipients WHERE id = ?";
-        const recipient = this.db.prepare(sql).get(recipientId) as
-            | { id: string }
+    async getRecipient(walletAddress: UUID, userId: string): Promise<boolean> {
+        const sql1 = "SELECT * FROM recipients WHERE userId = ?";
+        const sql2 = "SELECT * FROM recipients WHERE walletAddress = ?";
+        const recipient1 = this.db.prepare(sql1).get(userId) as
+            | { userId: string }
             | undefined;
-        return recipient ? true : false;
+        const recipient2 = this.db.prepare(sql2).get(walletAddress) as
+            | { walletAddress: string }
+            | undefined;
+        return recipient1 ? true : recipient2 ? true : false;
     }
 
     async getActorDetails(params: { roomId: UUID }): Promise<Actor[]> {

@@ -23,10 +23,10 @@ export class SqlJsDatabaseAdapter
     extends DatabaseAdapter<Database>
     implements IDatabaseCacheAdapter
 {
-    addRecipient(recipientId: UUID): Promise<boolean> {
+    addRecipient(walletAddress: UUID, userId: string, token: number): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
-    getRecipient(recipientId: UUID): Promise<boolean> {
+    getRecipient(walletAddress: UUID, userId: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
     constructor(db: Database) {

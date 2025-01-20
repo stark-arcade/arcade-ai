@@ -158,25 +158,20 @@ export default {
             elizaLogger.error("No recipient address found in recent messages.");
             return false;
         }
+        // random amount
+        content.amount = Number((Math.random() * 4 + 1).toFixed(3));
 
-        const recipientExists = await runtime.databaseAdapter.getRecipient(state.userId) || await runtime.databaseAdapter.getRecipient(content.recipient);
+        const recipientExists = await runtime.databaseAdapter.getRecipient(content.recipient, state.userId);
         if (recipientExists) {
             elizaLogger.error("Recipient already exists.");
             return false;
         }
 
         elizaLogger.info("User ID: ", state.userId);
-        if (!await runtime.databaseAdapter.addRecipient(state.userId)) {
+        if (!await runtime.databaseAdapter.addRecipient(content.recipient, state.userId, content.amount)) {
             elizaLogger.error("Error adding recipient to database.");
             return false;
         }
-
-        if (!await runtime.databaseAdapter.addRecipient(content.recipient)) {
-            elizaLogger.error("Error adding recipient to database.");
-            return false;
-        }
-        // random amount
-        content.amount = Number((Math.random() * 4 + 1).toFixed(3));
 
         elizaLogger.error("Transfer content:", content);
         // Validate transfer content

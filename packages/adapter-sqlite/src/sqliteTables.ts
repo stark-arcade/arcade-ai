@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 
 -- Table: recipients
 CREATE TABLE IF NOT EXISTS "recipients" (
-    "id" TEXT PRIMARY KEY
+    "userId" TEXT PRIMARY KEY,
+    "walletAddress" TEXT,
+    "tokenRecieved" INTEGER
 );
 
 -- Table: memories

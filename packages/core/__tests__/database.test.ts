@@ -19,10 +19,10 @@ class MockDatabaseAdapter extends DatabaseAdapter {
     close(): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    addRecipient(recipientId: UUID): Promise<boolean> {
+    addRecipient(walletAddress: UUID, userId: string, token: number): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
-    getRecipient(recipientId: UUID): Promise<boolean> {
+    getRecipient(walletAddress: UUID, userId: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
     getKnowledge(params: { id?: UUID; agentId: UUID; limit?: number; query?: string; conversationContext?: string; }): Promise<RAGKnowledgeItem[]> {

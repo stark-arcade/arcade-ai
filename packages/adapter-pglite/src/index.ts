@@ -35,10 +35,10 @@ export class PGLiteDatabaseAdapter
     extends DatabaseAdapter<PGlite>
     implements IDatabaseCacheAdapter
 {
-    addRecipient(recipientId: UUID): Promise<boolean> {
+    addRecipient(walletAddress: UUID, userId: string, token: number): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
-    getRecipient(recipientId: UUID): Promise<boolean> {
+    getRecipient(walletAddress: UUID, userId: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
     constructor(options: PGliteOptions) {
