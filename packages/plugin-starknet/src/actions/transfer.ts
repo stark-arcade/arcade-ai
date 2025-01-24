@@ -69,33 +69,21 @@ export function isTransferContent(
     return true;
 }
 
-const transferTemplate = `Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined.
+const transferTemplate = `Respond with a JSON markdown block that evaluate the wishes. Use null for any values that cannot be determined.
 
-For the amount to send, use a value from 0.00001 - 1.0. Determine this based on your judgement of the recipient.
+If a wish is truly meaningful and heartfelt, evaluate the wish and assign it a value from 1 to 10. If the wish is ordinary, return null.
 
-these are known addresses, if you get asked about them, use these:
-- BTC/btc: 0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac
-- ETH/eth: 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
-- STRK/strk: 0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d
-- LORDS/lords: 0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49
 
 Example response:
 \`\`\`json
 {
-    "recipient": "0x1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF",
-    "starkName": "domain.stark",
-    "amount": "0.001"
+    "amount": "2"
 }
 \`\`\`
 
 {{recentMessages}}
 
-Given the recent messages, extract the following information about the requested token transfer:
-- Recipient wallet address
-- Recipient .stark name
-
-
-Respond with a JSON markdown block containing only the extracted values.`;
+Given the recent messages, evaluate the wishes and determine the amount to send. Respond with a JSON markdown block containing only the amount to send.`;
 
 export default {
     name: "HANDLE_WISHES",
@@ -111,7 +99,7 @@ export default {
         return true;
     },
     description:
-        "MUST use this action if the user offer heartfelt, kind New Year's greetings or wishes.",
+        "MUST use this action if the user offer heartfelt, kind Lunar New Year's (Tet Holiday) greetings or wishes.",
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
@@ -148,6 +136,7 @@ export default {
             context: transferContext,
             modelClass: ModelClass.MEDIUM,
         });
+        elizaLogger.info("Transfer content:", content);
         /// Setting token address to Strk
         // content.tokenAddress = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
         content.tokenAddress = PROVIDER_CONFIG.TOKEN_ADDRESSES.STRK;
@@ -159,7 +148,8 @@ export default {
             return false;
         }
         // random amount
-        content.amount = Number((Math.random() * 4 + 1).toFixed(3));
+        if (!content.amount)
+            content.amount = Number((Math.random() * 4 + 1).toFixed(3));
 
         const recipientExists = await runtime.databaseAdapter.getRecipient(content.recipient, state.userId);
         if (recipientExists) {
@@ -217,7 +207,7 @@ export default {
             if (callback) {
                 callback({
                     text:
-                        "Here’s a little something for your kind wishes: " +
+                        "Here’s your lucky money: " +
                         content.amount +
                         " STRK token! 🎉",
                     content: {},

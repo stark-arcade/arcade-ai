@@ -45,6 +45,8 @@ Recent interactions between {{agentName}} and other users:
 
 Current Post:
 {{currentPost}}
+Remember that the current time is Tet Holiday (Lunar New Year) 2025, year of the snake. Don't mistake with the Solar New Year.
+Remember to include this information in your response: Invite people join in building amazing games on Starknet, check out the Arcade Garden Program details at http://starkarcade.com/garden
 Here is the descriptions of images in the Current post.
 {{imageDescriptions}}
 
@@ -92,6 +94,13 @@ Thread of Tweets You Are Replying To:
 
 # INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation.
 ` + shouldRespondFooter;
+
+const twitterRefinedMessageTemplate = `
+The current time is Tet Holiday (Lunar New Year) 2025, year of the snake. If the following information is mistaken with the Solar New Year, please correct it, if not, don't make any changes.
+Response format should be formatted in a JSON block like this:
+\`\`\`json
+{ "text": "string" }
+\`\`\``;
 
 export class TwitterInteractionClient {
     client: ClientBase;
@@ -444,7 +453,7 @@ export class TwitterInteractionClient {
                 this.runtime.character?.templates?.messageHandlerTemplate ||
                 twitterMessageHandlerTemplate,
         });
-        elizaLogger.debug("Interactions prompt:\n" + context);
+        elizaLogger.info("Interactions prompt:\n" + context);
 
         const response = await generateMessageResponse({
             runtime: this.runtime,
