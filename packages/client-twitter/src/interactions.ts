@@ -45,8 +45,6 @@ Recent interactions between {{agentName}} and other users:
 
 Current Post:
 {{currentPost}}
-Remember that the current time is Tet Holiday (Lunar New Year) 2025, year of the snake. Don't mistake with the Solar New Year.
-Remember to include this information in your response: Invite people join in building amazing games on Starknet, check out the Arcade Garden Program details at http://starkarcade.com/garden
 Here is the descriptions of images in the Current post.
 {{imageDescriptions}}
 
@@ -95,12 +93,48 @@ Thread of Tweets You Are Replying To:
 # INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation.
 ` + shouldRespondFooter;
 
-const twitterRefinedMessageTemplate = `
-The current time is Tet Holiday (Lunar New Year) 2025, year of the snake. If the following information is mistaken with the Solar New Year, please correct it, if not, don't make any changes.
-Response format should be formatted in a JSON block like this:
-\`\`\`json
-{ "text": "string" }
-\`\`\``;
+const twitterRefinedMessageTemplate =
+    `
+# Areas of Expertise
+{{knowledge}}
+
+# About {{agentName}} (@{{twitterUserName}}):
+{{bio}}
+{{lore}}
+{{topics}}
+
+{{providers}}
+
+{{characterPostExamples}}
+
+{{postDirections}}
+
+Recent interactions between {{agentName}} and other users:
+{{recentPostInteractions}}
+
+{{recentPosts}}
+
+# TASK: Generate a post/reply in the voice, style and perspective of {{agentName}} (@{{twitterUserName}}) while using the thread of tweets as additional context:
+
+Current Post:
+{{currentPost}}
+Remember that the current time is Tet Holiday (Lunar New Year) 2025, year of the snake. Don't mistake with the Solar New Year.
+Remember to include this information in your response: Invite people join in building amazing games on Starknet, check out the Arcade Garden Program details at http://starkarcade.com/garden
+Here is the descriptions of images in the Current post.
+{{imageDescriptions}}
+
+Thread of Tweets You Are Replying To:
+{{formattedConversation}}
+
+# INSTRUCTIONS: Generate a post in the voice, style and perspective of {{agentName}} (@{{twitterUserName}}). You MUST include an action if the current post text includes a prompt that is similar to one of the available actions mentioned here:
+{{actionNames}}
+{{actions}}
+
+Here is the current post text again. Remember to include an action if the current post text includes a prompt that asks for one of the available actions mentioned above (does not need to be exact)
+{{currentPost}}
+Here is the descriptions of images in the Current post.
+{{imageDescriptions}}
+` + messageCompletionFooter;
 
 export class TwitterInteractionClient {
     client: ClientBase;
@@ -453,9 +487,9 @@ export class TwitterInteractionClient {
                 this.runtime.character?.templates?.messageHandlerTemplate ||
                 twitterMessageHandlerTemplate,
         });
-        elizaLogger.info("Interactions prompt:\n" + context);
+        // elizaLogger.info("Interactions prompt:\n" + context);
 
-        const response = await generateMessageResponse({
+        var response = await generateMessageResponse({
             runtime: this.runtime,
             context,
             modelClass: ModelClass.LARGE,
@@ -469,6 +503,40 @@ export class TwitterInteractionClient {
         response.inReplyTo = stringId;
 
         response.text = removeQuotes(response.text);
+
+        elizaLogger.info("Response action: " + response.action);
+        if (response.action) {
+            const normalizedAction = response.action
+                .toLowerCase()
+                .replace("_", "");
+
+            let action = this.runtime.actions.find(
+                (a: { name: string }) =>
+                    a.name
+                        .toLowerCase()
+                        .replace("_", "")
+                        .includes(normalizedAction) ||
+                    normalizedAction.includes(
+                        a.name.toLowerCase().replace("_", "")
+                    )
+            );
+            if (action.name === "HANDLE_WISHES")
+            {
+                elizaLogger.info("Original Response:\n" + response.text);
+                const refinedContext = composeContext({
+                    state,
+                    template: twitterRefinedMessageTemplate,
+                });
+
+                const refinedResponse = await generateMessageResponse({
+                    runtime: this.runtime,
+                    context: refinedContext,
+                    modelClass: ModelClass.LARGE,
+                });
+                response.text = removeQuotes(refinedResponse.text);
+                elizaLogger.info("Refined Response:\n" + response.text);
+            }
+        }
 
         if (response.text) {
             if (this.isDryRun) {
