@@ -1,6 +1,6 @@
 import { elizaLogger, IAgentRuntime } from "@elizaos/core";
 import { Fraction, Percent } from "@uniswap/sdk-core";
-import { Account, Contract, RpcProvider } from "starknet";
+import { Account, constants, Contract, RpcProvider } from "starknet";
 
 export const getTokenBalance = async (
     runtime: IAgentRuntime,
@@ -30,7 +30,9 @@ export const getStarknetAccount = (runtime: IAgentRuntime) => {
     return new Account(
         getStarknetProvider(runtime),
         runtime.getSetting("STARKNET_ADDRESS"),
-        runtime.getSetting("STARKNET_PRIVATE_KEY")
+        runtime.getSetting("STARKNET_PRIVATE_KEY"),
+        undefined,
+        constants.TRANSACTION_VERSION.V3
     );
 };
 

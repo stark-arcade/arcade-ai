@@ -151,14 +151,23 @@ export default {
         if (!content.amount)
             content.amount = Number((Math.random() * 4 + 1).toFixed(3));
 
-        const recipientExists = await runtime.databaseAdapter.getRecipient(content.recipient, state.userId);
+        const recipientExists = await runtime.databaseAdapter.getRecipient(
+            content.recipient,
+            state.userId
+        );
         if (recipientExists) {
             elizaLogger.error("Recipient already exists.");
             return false;
         }
 
         elizaLogger.info("User ID: ", state.userId);
-        if (!await runtime.databaseAdapter.addRecipient(content.recipient, state.userId, content.amount)) {
+        if (
+            !(await runtime.databaseAdapter.addRecipient(
+                content.recipient,
+                state.userId,
+                content.amount
+            ))
+        ) {
             elizaLogger.error("Error adding recipient to database.");
             return false;
         }
