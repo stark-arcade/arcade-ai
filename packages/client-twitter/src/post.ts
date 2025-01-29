@@ -66,9 +66,9 @@ Guidelines:
   - Political/controversial unless central to character
   - Promotional/marketing unless directly relevant
 
+  
 Actions (respond only with tags):
 [LIKE] - Perfect topic match AND aligns with character (9.8/10)
-[RETWEET] - Exceptional content that embodies character's expertise (9.5/10)
 [QUOTE] - Can add substantial domain expertise (9.5/10)
 [REPLY] - Can contribute meaningful, expert-level insight (9.5/10)
 
@@ -838,26 +838,6 @@ export class TwitterPostClient {
                         } catch (error) {
                             elizaLogger.error(
                                 `Error liking tweet ${tweet.id}:`,
-                                error
-                            );
-                        }
-                    }
-                }
-
-                if (actionResponse.retweet) {
-                    if (this.isDryRun) {
-                        elizaLogger.info(
-                            `Dry run: would have retweeted tweet ${tweet.id}`
-                        );
-                        executedActions.push("retweet (dry run)");
-                    } else {
-                        try {
-                            await this.client.twitterClient.retweet(tweet.id);
-                            executedActions.push("retweet");
-                            elizaLogger.log(`Retweeted tweet ${tweet.id}`);
-                        } catch (error) {
-                            elizaLogger.error(
-                                `Error retweeting tweet ${tweet.id}:`,
                                 error
                             );
                         }
