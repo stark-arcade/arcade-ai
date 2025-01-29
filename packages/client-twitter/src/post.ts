@@ -54,7 +54,12 @@ const twitterPostTemplate = `
 # Task: Generate a post in the voice and style and perspective of {{agentName}} @{{twitterUserName}}.
 Write a post that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Do not add commentary or acknowledge this request, just write the post.
 Your response should be 1, 2, or 3 sentences (choose the length at random).
-Your response should not contain any questions. Brief, concise statements only. The total character count MUST be less than {{maxTweetLength}}. No emojis. Use \\n\\n (double spaces) between statements if there are multiple statements in your response.`;
+Your response should not contain any questions. Brief, concise statements only. The total character count MUST be less than {{maxTweetLength}}. No emojis. Use \\n\\n (double spaces) between statements if there are multiple statements in your response.
+
+# Special Rule:
+- If the post is related to **Starknet** or **Layer 2 blockchains**, the bot must include "@Starknet" in the post.
+
+`;
 
 export const twitterActionTemplate =
     `
@@ -87,6 +92,9 @@ Actions (respond only with tags):
 
 Tweet:
 {{currentTweet}}
+
+# Special Rule: 
+- If the tweet is related to **Starknet** or **Layer 2 blockchains**, the bot must include "@Starknet" in the response.
 
 # Respond with qualifying action tags only. Default to NO action unless extremely confident of relevance.` +
     postActionResponseFooter;
