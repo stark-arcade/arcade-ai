@@ -99,13 +99,13 @@ Guidelines:
 
 Actions (respond only with tags):
 [LIKE] - Perfect topic match AND aligns with character (9.8/10)
-[QUOTE] - Can add substantial domain expertise , never use JSON formatting (9.5/10)
-[REPLY] - Can contribute meaningful, expert-level insight, never use JSON formatting (9.5/10)
+[QUOTE] - Can add substantial domain expertise  (9.5/10)
+[REPLY] - Can contribute meaningful, expert-level insight (9.5/10)
 
 Tweet:
 {{currentTweet}}
 
-# Special Rule: 
+# Special Rule:
 - If the tweet is related to **Starknet** or **Layer 2 blockchains**, the bot must include "@Starknet" in the response.
 
 # Response Format
