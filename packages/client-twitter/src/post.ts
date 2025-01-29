@@ -65,7 +65,8 @@ export const twitterActionTemplate =
 Guidelines:
 - ONLY engage with content that DIRECTLY relates to character's core interests
 - Direct mentions are priority IF they are on-topic
-- Never use JSON formatting
+- NEVER use JSON formatting
+- NEVER use: { "user": "...", "text": "..." } format
 - Skip ALL content that is:
   - Off-topic or tangentially related
   - From high-profile accounts unless explicitly relevant
