@@ -29,8 +29,26 @@ import { State } from "@elizaos/core";
 import { ActionResponse } from "@elizaos/core";
 
 const MAX_TIMELINES_TO_FETCH = 15;
+const starknetRulesPartial = `
+# Starknet Protocol Rules (STRICTLY ENFORCED)
+1. REQUIRED TAGGING:
+   - Include @Starknet WHEN:
+     * Discussing ZK-tech/L2 solutions
+     * Analyzing network upgrades
+     * Comparing scaling approaches
+   - Placement: End of first OR last sentence
+   - Include @Starknet ONLY ONCE per post
 
-const twitterPostTemplate = `
+2. CONTENT RESTRICTIONS:
+   - Never explicitly write "Starknet" or "Layer 2"
+   - Never use hashtags (#Starknet/#L2)
+
+3. EXAMPLES:
+   ✓ "Recent VM optimizations boost proof generation speeds @Starknet"
+   ✗ "Starknet's new prover shows 2x speed improvement"
+`;
+const twitterPostTemplate =
+    `
 # Areas of Expertise
 {{knowledge}}
 
@@ -56,10 +74,7 @@ Write a post that is {{adjective}} about {{topic}} (without mentioning {{topic}}
 Your response should be 1, 2, or 3 sentences (choose the length at random).
 Your response should not contain any questions. Brief, concise statements only. The total character count MUST be less than {{maxTweetLength}}. No emojis. Use \\n\\n (double spaces) between statements if there are multiple statements in your response.
 
-# Special Rule:
-- If the post is related to **Starknet** or **Layer 2 blockchains**, the bot must include "@Starknet" in the post.
-
-`;
+` + starknetRulesPartial;
 
 export const twitterActionTemplate =
     `
@@ -71,7 +86,6 @@ Guidelines:
 - ONLY engage with content that DIRECTLY relates to character's core interests
 - Direct mentions are priority IF they are on-topic
 - NEVER use JSON formatting
-- NEVER use: { "user": "...", "text": "..." } format
 - Skip ALL content that is:
   - Off-topic or tangentially related
   - From high-profile accounts unless explicitly relevant
@@ -79,12 +93,11 @@ Guidelines:
   - Political/controversial unless central to character
   - Promotional/marketing unless directly relevant
 
-Example BAD response: 
-"{ "user": "CobrAI", "text": "Starknet update incoming! Exciting changes!" }"
+# Format Requirements
+- NO JSON formatting
+- NO { "user": "...", "text": "..." } format
+- Plain text responses only
 
-Example GOOD response:
-"Starknet v0.13.4 prerelease notes published. Key updates include [technical details]."  
-  
 Actions (respond only with tags):
 [LIKE] - Perfect topic match AND aligns with character (9.8/10)
 [QUOTE] - Can add substantial domain expertise , never use JSON formatting (9.5/10)
@@ -96,7 +109,9 @@ Tweet:
 # Special Rule: 
 - If the tweet is related to **Starknet** or **Layer 2 blockchains**, the bot must include "@Starknet" in the response.
 
+# Response Format
 # Respond with qualifying action tags only. Default to NO action unless extremely confident of relevance.` +
+    starknetRulesPartial +
     postActionResponseFooter;
 
 interface PendingTweet {
