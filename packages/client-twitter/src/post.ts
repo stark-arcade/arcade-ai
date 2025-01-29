@@ -45,6 +45,12 @@ const twitterPostTemplate = `
 
 {{postDirections}}
 
+# Style Enforcement
+- STRICTLY PROHIBITED: JSON formatting, curly braces, or quotation marks
+- NEVER use: { "user": "...", "text": "..." } format
+- Output MUST be plain text only
+- Reject any markdown or code formatting
+
 # Task: Generate a post in the voice and style and perspective of {{agentName}} @{{twitterUserName}}.
 Write a post that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Do not add commentary or acknowledge this request, just write the post.
 Your response should be 1, 2, or 3 sentences (choose the length at random).
@@ -67,6 +73,11 @@ Guidelines:
   - Political/controversial unless central to character
   - Promotional/marketing unless directly relevant
 
+Example BAD response: 
+"{ "user": "CobrAI", "text": "Starknet update incoming! Exciting changes!" }"
+
+Example GOOD response:
+"Starknet v0.13.4 prerelease notes published. Key updates include [technical details]."  
   
 Actions (respond only with tags):
 [LIKE] - Perfect topic match AND aligns with character (9.8/10)
