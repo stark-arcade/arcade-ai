@@ -659,10 +659,10 @@ export class TwitterPostClient {
         // Try to parse as JSON first
         try {
             const jsonResponse = JSON.parse(cleanedResponse);
+            //    jsonResponse.text?.trim() || "";
             if (jsonResponse.text) {
                 return this.trimTweetLength(jsonResponse.text);
-            }
-            if (typeof jsonResponse === "object") {
+            } else if (typeof jsonResponse === "object") {
                 const possibleContent =
                     jsonResponse.content ||
                     jsonResponse.message ||
